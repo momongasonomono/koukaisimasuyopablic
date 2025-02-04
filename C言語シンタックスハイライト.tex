@@ -1,0 +1,121 @@
+\documentclass[platex,dvipdfmx,]{jarticle}
+
+\usepackage{graphicx}
+% グラフィックスを扱うためのパッケージ
+\usepackage{array}
+% 表の列のフォーマットを定義するためのパッケージ
+\usepackage{siunitx}
+% SI単位系を扱うためのパッケージ
+\usepackage{okumacro}
+% 日本語のルビを振るためのパッケージ
+\usepackage{pdfpages}
+% PDFファイルを挿入するためのパッケージ
+\usepackage{amsmath}
+% 数学記号や数式を扱うためのパッケージ
+\usepackage{upgreek}
+% ギリシャ文字のアップライトフォントを使用するためのパッケージ
+\usepackage{here}
+% 図や表を強制的に現在の位置に配置するためのパッケージ
+\usepackage{bm}
+% 太字の数学記号を使用するためのパッケージ
+\usepackage{listings}
+\usepackage{xcolor}
+
+\begin{document}
+%\includepdf{figures/hyoushi7.pdf}
+
+\section*{課題}次の1次元熱伝導方程式の近似解をオイラー陽解法で求めよ．
+\begin{equation*}
+    \frac{\partial u}{\partial t} = \frac{\partial^2 u}{\partial x^2}
+    ,\quad (0\leq x\leq 1,0\leq t)
+\end{equation*}
+
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=5pt,
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    frame=single,
+    tabsize=4,
+    captionpos=b
+}
+
+\begin{lstlisting}[caption={1次元熱伝導方程式のオイラー陽解法による近似解}, label={lst:heat_equation}]
+#include <stdio.h>
+#include <math.h>
+
+#define NX 11
+#define NT 250
+#define DX 0.1
+#define DT 0.004
+
+void initialize(double u[NX]) {
+    for (int i = 0; i < NX; i++) {
+        if (i * DX <= 0.5) {
+            u[i] = i * DX;
+        } else {
+            u[i] = 1.0 - i * DX;
+        }
+    }
+}
+
+void euler_explicit(double u[NX], double unew[NX]) {
+    for (int t = 0; t < NT; t++) {
+        for (int i = 1; i < NX - 1; i++) {
+            unew[i] = u[i] + DT / (DX * DX) * (u[i + 1] - 2 * u[i] + u[i - 1]);
+        }
+        for (int i = 1; i < NX - 1; i++) {
+            u[i] = unew[i];
+        }
+    }
+}
+
+int main() {
+    double u[NX], unew[NX];
+    initialize(u);
+    euler_explicit(u, unew);
+
+    for (int i = 0; i < NX; i++) {
+        printf("%f ", u[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+\end{lstlisting}
+\begin{align*}
+初期条件:\,& u(x,0) =
+\begin{cases}
+    x & (0 \leq x \leq 0.5) \\
+    -x+1 & (0.5 < x \leq 1)
+\end{cases}\\
+境界条件:\,& u(0,t) = 0, u(1,t) = 0 \quad (0\leq t)
+\end{align*}
+$\Delta x = 0.1,\Delta t = 0.004$として解け．
+
+\paragraph*{解}計算結果は図\ref{fig:heat}のようになった．計算結果をもとに，uの変化の様子をプロットしたものを図\ref{fig:graph}に示す．
+%\begin{figure}[h]
+%    \centering
+%    \includegraphics[width=\textwidth]{figures/netudendou.png}
+%    \caption{熱伝導方程式の解}
+%    \label{fig:heat}
+%\end{figure}
+%\begin{figure}
+%    \centering
+%    \includegraphics[width=\textwidth]{figures/henbibun.png}
+%    \caption{時間ごとのuの変化}
+%    \label{fig:graph}
+%\end{figure}
+
+\end{document}
