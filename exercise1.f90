@@ -9,7 +9,7 @@
 !   3. 日数に基づく料金 (y1) を計算。
 !   4. 時間に基づく料金 (y2) を計算。
 !      - 6時間を超える場合は一律1800円。
-!      - 6時間以下の場合は30分ごとに300円。
+!      - 6時間以下の場合は30分ごとに150円。
 !   5. 合計料金 (y1 + y2) を整数値に丸めて出力。
 ! 注意事項    :
 !   - 入力は24時間を超える場合も対応。
@@ -24,7 +24,7 @@ program exercise1
     implicit double precision (a-h,o-z)
     !write文でプログラムの概要を説明
     write(*,*)'This program calculates parking fee.'
-    write(*,*)'How many hours you park the car?'
+    write(*,*)'How many hours do you park the car?'
     !x:駐車時間[hour]を入力
     read(*,*)x
     !x:駐車時間[h]を24時間単位で日数[d]と時間[h]に分割
